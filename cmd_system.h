@@ -18,6 +18,7 @@ extern "C"
 /* *****************************************************************************
  * Header Includes
  **************************************************************************** */
+#include <sdkconfig.h>
     
 /* *****************************************************************************
  * Configuration Definitions
@@ -47,7 +48,9 @@ extern "C"
  * Function Prototypes
  **************************************************************************** */
 void cmd_system_register(void);
+#if CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS
 void cmd_system_tasks_info(void);
+#endif
 
 
 #ifdef __cplusplus

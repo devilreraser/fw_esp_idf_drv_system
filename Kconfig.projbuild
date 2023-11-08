@@ -1,7 +1,11 @@
 menu "Component drv_system Configuration"
 
-    config SYSTEM_USE_STREAM_BUFFER
-        bool "Use Freertos Stream Buffer"
+    config DRV_SYSTEM_USE
+        bool "Use drv_system component"
         default y
+        
+    # config SYSTEM_USE_STREAM_BUFFER
+    #     bool "Use Freertos Stream Buffer"
+    #     default y
         
 endmenu

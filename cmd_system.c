@@ -15,6 +15,7 @@
 
 #include <string.h>
 #include <inttypes.h>
+#include <sdkconfig.h>
 
 #include "esp_log.h"
 #include "esp_console.h"
@@ -24,10 +25,10 @@
 #include "esp_chip_info.h"
 
 #include "esp_flash.h"
-#if defined(USE_5_0_RELEASE) && (USE_5_0_RELEASE)
-#include "spi_flash_mmap.h"
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+#include "spi_flash_mmap.h" /* esp_spi_flash.h is deprecated, please use spi_flash_mmap.h instead */
 #else
-#include "esp_spi_flash.h" //esp_spi_flash.h is (USE_5_0_RELEASE) deprecated, please use spi_flash_mmap.h instead
+#include "esp_spi_flash.h"
 #endif
 
 #include "esp_mac.h"
@@ -36,10 +37,16 @@
 #include "freertos/task.h"
 
 #include "argtable3/argtable3.h"
-#include "drv_version_if.h"
-#include "drv_system_if.h"
 
-#include "drv_console_if.h"
+#include "drv_system.h"
+
+#if CONFIG_DRV_CONSOLE_USE
+#include "drv_console.h"
+#endif
+
+#if CONFIG_DRV_VERSION_USE
+#include "drv_version.h"
+#endif
 
 /* *****************************************************************************
  * Configuration Definitions
@@ -107,7 +114,7 @@ static int get_chip(int argc, char **argv)
     #endif
 
     uint32_t size_flash_chip;
-	#if defined(USE_5_0_RELEASE) && (USE_5_0_RELEASE)
+	#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
     esp_flash_get_size(NULL, &size_flash_chip);
 	#else
     size_flash_chip = (uint32_t)spi_flash_get_chip_size();
@@ -137,6 +144,7 @@ static void register_chip(void)
 }
 
 
+#if CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS
 static int tasks_info(int argc, char **argv)
 {
     const size_t bytes_per_task = 40; /* see vTaskList description */
@@ -166,6 +174,7 @@ static void register_tasks(void)
     };
     ESP_ERROR_CHECK( esp_console_cmd_register(&cmd_tasks) );
 }
+#endif
 
 #if CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS
 static int load_info(int argc, char **argv)
@@ -197,19 +206,24 @@ static void register_load(void)
     };
     ESP_ERROR_CHECK( esp_console_cmd_register(&cmd_load) );
 }
-#endif
 
 void cmd_system_tasks_info(void)
 {
     tasks_info((int)NULL, (char**)NULL);
 }
+#endif
 
 
 
 static int mem_info(int argc, char **argv)
 {  
+    #if CONFIG_DRV_CONSOLE_USE
+    #if CONFIG_DRV_CONSOLE_CUSTOM
+    #if CONFIG_DRV_CONSOLE_CUSTOM_LOG_DISABLE_FIX
     drv_console_set_log_disabled();
-
+    #endif
+    #endif
+    #endif
 
     multi_heap_info_t info;
 
@@ -251,8 +265,14 @@ static void register_mem(void)
 
 
 static int heap_size(int argc, char **argv)
-{  
+{
+    #if CONFIG_DRV_CONSOLE_USE
+    #if CONFIG_DRV_CONSOLE_CUSTOM
+    #if CONFIG_DRV_CONSOLE_CUSTOM_LOG_DISABLE_FIX
     drv_console_set_log_disabled();
+    #endif
+    #endif
+    #endif
 
     printf("min heap (default       ): ");
     printf("%6d", heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT));
@@ -310,7 +330,13 @@ static void register_heap(void)
 
 static int free_mem(int argc, char **argv)
 {
+    #if CONFIG_DRV_CONSOLE_USE
+    #if CONFIG_DRV_CONSOLE_CUSTOM
+    #if CONFIG_DRV_CONSOLE_CUSTOM_LOG_DISABLE_FIX
     drv_console_set_log_disabled();
+    #endif
+    #endif
+    #endif
 
     printf("free mem (default       ): ");
     printf("%" PRIu32, esp_get_free_heap_size());
@@ -390,7 +416,14 @@ static struct {
 
 static int man(int argc, char **argv)
 {
+    #if CONFIG_DRV_CONSOLE_USE
+    #if CONFIG_DRV_CONSOLE_CUSTOM
+    #if CONFIG_DRV_CONSOLE_CUSTOM_LOG_DISABLE_FIX
     drv_console_set_other_log_disabled();
+    #endif
+    #endif
+    #endif
+
 
     ESP_LOGI(__func__, "argc=%d", argc);
     for (int i = 0; i < argc; i++)
@@ -469,8 +502,8 @@ void register_system_common(void)
     register_reset();
     register_mem();
     register_man();
-    register_tasks();
     #if CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS
+    register_tasks();
     register_load();
     #endif
     register_chip();

@@ -12,6 +12,7 @@
  * Header Includes
  **************************************************************************** */
 #include "drv_system.h"
+#include "cmd_system.h"
 
 #include <string.h>
 
@@ -58,3 +59,7 @@ uint8_t* drv_system_get_last_mac_identification_request(void)
     return last_mac_identification_request;
 }
 
+void drv_system_init(void)
+{
+    cmd_system_register();
+}

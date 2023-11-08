@@ -49,7 +49,7 @@ extern "C"
  **************************************************************************** */
 void drv_system_set_last_mac_identification_request(uint8_t* mac_address);
 uint8_t* drv_system_get_last_mac_identification_request(void);
-
+void drv_system_init(void);
 
 #ifdef __cplusplus
 }
