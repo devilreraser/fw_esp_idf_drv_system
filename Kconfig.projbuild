@@ -2,6 +2,8 @@ menu "Component drv_system Configuration"
 
     config DRV_SYSTEM_USE
         bool "Use drv_system component"
+        select FREERTOS_GENERATE_RUN_TIME_STATS
+        select FREERTOS_VTASKLIST_INCLUDE_COREID
         default y
         
 endmenu
