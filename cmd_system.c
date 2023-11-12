@@ -23,7 +23,7 @@
 #include "esp_heap_caps.h"
 
 #include "esp_chip_info.h"
-
+#include "esp_idf_version.h"
 #include "esp_flash.h"
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
 #include "spi_flash_mmap.h" /* esp_spi_flash.h is deprecated, please use spi_flash_mmap.h instead */
