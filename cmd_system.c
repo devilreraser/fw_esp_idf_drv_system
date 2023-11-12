@@ -95,7 +95,7 @@ static int get_chip(int argc, char **argv)
                  info.model == CHIP_ESP32S2 ? "ESP32S2" : 
                  info.model == CHIP_ESP32S3 ? "ESP32S3" : 
                  info.model == CHIP_ESP32C3 ? "ESP32C3" : 
-                 #if USE_5_0_RELEASE
+                 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
                  info.model == CHIP_ESP32C2 ? "ESP32C2" : 
                  #endif
                  info.model == CHIP_ESP32H2 ? "ESP32H2" : "Unknow");
